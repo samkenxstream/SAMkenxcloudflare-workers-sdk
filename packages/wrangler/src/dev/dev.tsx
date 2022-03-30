@@ -382,6 +382,7 @@ function ErrorFallback(props: { error: Error }) {
   return (
     <>
       <Text>Something went wrong:</Text>
+      <Text>{props.error.message}</Text>
       <Text>{props.error.stack}</Text>
     </>
   );
