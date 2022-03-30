@@ -213,7 +213,7 @@ function demandOneOfOption(...options: string[]) {
 class CommandLineArgsError extends Error {}
 class DeprecationError extends Error {
   constructor(message: string) {
-    super(`DEPRECATION WARNING:\n${message}`);
+    super(`🔴 DEPRECATION WARNING:\n${message}`);
   }
 }
 
