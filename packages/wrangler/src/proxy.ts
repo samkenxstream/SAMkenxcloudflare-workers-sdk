@@ -289,11 +289,16 @@ export function usePreviewServer({
   // Start/stop the server whenever the
   // containing component is mounted/unmounted.
   useEffect(() => {
+    const abortCtrl = new AbortController();
     if (proxyServer === undefined) {
       return;
     }
 
-    waitForPortToBeAvailable(port, { retryPeriod: 200, timeout: 2000 })
+    waitForPortToBeAvailable(port, {
+      retryPeriod: 200,
+      timeout: 2000,
+      abortCtrl: abortCtrl.signal,
+    })
       .then(() => {
         proxyServer.listen(port, ip);
         console.log(`⬣ Listening at ${localProtocol}://${ip}:${port}`);
@@ -304,6 +309,7 @@ export function usePreviewServer({
 
     return () => {
       proxyServer.close();
+      abortCtrl.abort();
     };
   }, [port, ip, proxyServer, localProtocol]);
 }
@@ -398,7 +404,7 @@ function createStreamHandler(
  */
 export async function waitForPortToBeAvailable(
   port: number,
-  options: { retryPeriod: number; timeout: number }
+  options: { retryPeriod: number; timeout: number; abortCtrl?: AbortSignal }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
@@ -421,6 +427,9 @@ export async function waitForPortToBeAvailable(
     }
 
     function checkPort() {
+      // Will clear the interval and timeout if signal is called,
+      // using resolve prevents Error messages on the console.
+      options.abortCtrl?.aborted && doResolve();
       // Testing whether a port is 'available' involves simply
       // trying to make a server listen on that port, and retrying
       // until it succeeds.
