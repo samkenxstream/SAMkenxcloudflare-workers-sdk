@@ -1,5 +1,28 @@
 # wrangler
 
+## 0.0.25
+
+### Patch Changes
+
+- [#723](https://github.com/cloudflare/wrangler2/pull/723) [`7942936`](https://github.com/cloudflare/wrangler2/commit/79429367f451d53a74413fd942053c3f732fe998) Thanks [@threepointone](https://github.com/threepointone)! - fix: spread tail messages when logging
+
+  Logged messages (via console, etc) would previously be logged as an array of values. This spreads it when logging to match what is expected.
+
+* [#699](https://github.com/cloudflare/wrangler2/pull/699) [`ea8e701`](https://github.com/cloudflare/wrangler2/commit/ea8e7015776b7ac1e15cd14d436d57403a8c5127) Thanks [@JacobMGEvans](https://github.com/JacobMGEvans)! - polish: added logout and login to helpstring message.
+
+- [#695](https://github.com/cloudflare/wrangler2/pull/695) [`48fa89b`](https://github.com/cloudflare/wrangler2/commit/48fa89b86d5b76b43cfd25035e914c32778eb80e) Thanks [@caass](https://github.com/caass)! - fix: stop wrangler spamming console after login
+
+  If a user hasn't logged in and then they run a command that needs a login they'll get bounced to the login flow.
+  The login flow (if completed) would write their shiny new OAuth2 credentials to disk, but wouldn't reload the
+  in-memory state. This led to issues like #693, where even though the user was logged in on-disk, wrangler
+  wouldn't be aware of it.
+
+  We now update the in-memory login state each time new credentials are written to disk.
+
+* [#726](https://github.com/cloudflare/wrangler2/pull/726) [`c4e5dc3`](https://github.com/cloudflare/wrangler2/commit/c4e5dc332e8a31ea7e6d74861597d17b446eb68f) Thanks [@threepointone](https://github.com/threepointone)! - fix: assume a worker is a module worker only if it has a `default` export
+
+  This tweaks the logic that guesses worker formats to check whether a `default` export is defined on an entry point before assuming it's a module worker.
+
 ## 0.0.24
 
 ### Patch Changes
